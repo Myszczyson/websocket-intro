@@ -6,6 +6,10 @@ const addMessageForm = document.getElementById('add-messages-form')
 const userNameInput = document.getElementById('username')
 const messageContentInput = document.getElementById('message-content')
 
+// Socket 
+const socket = io();
+socket.connect("http://localhost:8000/");
+
 // Global var
 
 let userName = ''
@@ -41,10 +45,20 @@ const sendMessage = (e) => {
         alert('Write your message first please!');
     } else {
         addMessage(userName, messageContentInput.value);
+        socket.emit('message', { author: userName, content: messageContentInput.value })
+        messageContentInput.value = '';
     }
     
 }
+
 // Events
+
+socket.on('message', (message) => {
+    console.log('Oh, I\'ve got something from ' + socket.id);
+    messagesList.push(message);
+    socket.broadcast.emit('message', message);
+});
+
 
 loginForm.addEventListener('submit', e => {
     login(e);
@@ -53,3 +67,4 @@ loginForm.addEventListener('submit', e => {
 addMessageForm.addEventListener('submit', e => {
     sendMessage(e);
 })
+
