@@ -55,7 +55,7 @@ const sendMessage = (e) => {
 
 socket.on('message', (message) => {
     console.log('Oh, I\'ve got something from ' + socket.id);
-    messagesList.push(message);
+    messages.push(message);
     socket.broadcast.emit('message', message);
 });
 
