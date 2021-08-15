@@ -1,14 +1,15 @@
 // Selectors
 const loginForm = document.getElementById('welcome-form')
 const messagesSection = document.getElementById('messages-section')
-let messagesList = document.getElementById('messages-list')
+const messagesList = document.getElementById('messages-list')
 const addMessageForm = document.getElementById('add-messages-form')
 const userNameInput = document.getElementById('username')
 const messageContentInput = document.getElementById('message-content')
 
 // Socket 
 const socket = io();
-socket.connect("http://localhost:8000/");
+
+socket.on('message', ({ author, content }) => addMessage(author, content))
 
 // Global var
 
@@ -29,7 +30,7 @@ const login = (e) => {
 
 const addMessage = (author, content) => {
     let message = document.createElement('li');
-    message.classList.add('message','message--received', author === userName ? 'message__self' : undefined);
+    message.classList.add('message','message--received', author === userName ? 'message--self' : 0);
     message.innerHTML = `
       <h3 class="message__author">${userName === author ? 'You' : author }</h3>
       <div class="message__content">
@@ -52,14 +53,6 @@ const sendMessage = (e) => {
 }
 
 // Events
-
-socket.on('message', (message) => {
-    console.log('Oh, I\'ve got something from ' + socket.id);
-    messages.push(message);
-    socket.broadcast.emit('message', message);
-});
-
-
 loginForm.addEventListener('submit', e => {
     login(e);
 })
