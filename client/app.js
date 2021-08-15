@@ -1,4 +1,5 @@
 // Selectors
+const socket = io();
 const loginForm = document.getElementById('welcome-form')
 const messagesSection = document.getElementById('messages-section')
 const messagesList = document.getElementById('messages-list')
@@ -6,14 +7,17 @@ const addMessageForm = document.getElementById('add-messages-form')
 const userNameInput = document.getElementById('username')
 const messageContentInput = document.getElementById('message-content')
 
-// Socket 
-const socket = io();
-
-socket.on('message', ({ author, content }) => addMessage(author, content))
-
 // Global var
 
 let userName = ''
+
+// Socket 
+
+socket.on('addUser', ({ author, content }) => addMessage(author, content))
+
+socket.on('message', ({ author, content }) => addMessage(author, content))
+
+socket.on('removeUser', ({ author, content }) => addMessage(author, content))
 
 // Functions 
 
@@ -25,6 +29,7 @@ const login = (e) => {
         userName = userNameInput.value;
         loginForm.classList.remove('show');
         messagesSection.classList.add('show');
+        socket.emit('login', { name: userName, id: socket.id})
     }
 }
 
@@ -49,10 +54,10 @@ const sendMessage = (e) => {
         socket.emit('message', { author: userName, content: messageContentInput.value })
         messageContentInput.value = '';
     }
-    
 }
 
 // Events
+
 loginForm.addEventListener('submit', e => {
     login(e);
 })
